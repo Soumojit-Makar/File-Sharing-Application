@@ -23,5 +23,16 @@ public class GlobalExceptionHandler {
                 HttpStatus.NOT_FOUND
         );
     }
-
+    @ExceptionHandler(FileExceptions.class)
+    public ResponseEntity<ApiResponseMessage> fileException(FileExceptions ex) {
+        logger.error(ex.getMessage());
+        return new ResponseEntity<>(
+                ApiResponseMessage.builder()
+                        .message(ex.getMessage())
+                        .success(false)
+                        .httpStatus(HttpStatus.BAD_REQUEST)
+                        .build(),
+                HttpStatus.BAD_REQUEST
+        );
+    }
 }

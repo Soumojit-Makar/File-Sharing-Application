@@ -3,10 +3,6 @@ package com.file_sharing.app.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 
-import org.springframework.data.annotation.CreatedBy;
-import org.springframework.data.annotation.CreatedDate;
-
-import java.io.Serializable;
 import java.time.Instant;
 
 @Data
@@ -16,11 +12,11 @@ public class FileEntity{
     private String fileId;
     private String fileName;
     private String fileType;
-    @CreatedBy
     @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
     private UserEntity uploadBy;
-    @CreatedDate
     private Instant uploadDate;
+    private Instant expiryDate;
     @Lob
+    @Column(name = "data",columnDefinition = "LONGBLOB")
     private byte[] fileData;
 }

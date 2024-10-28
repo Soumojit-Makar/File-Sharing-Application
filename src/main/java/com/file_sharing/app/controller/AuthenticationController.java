@@ -1,9 +1,6 @@
 package com.file_sharing.app.controller;
 
-import com.file_sharing.app.dto.JwtRequest;
-import com.file_sharing.app.dto.JwtResponse;
-import com.file_sharing.app.dto.RefreshTokenDTO;
-import com.file_sharing.app.dto.UserDTo;
+import com.file_sharing.app.dto.*;
 import com.file_sharing.app.entity.UserEntity;
 import com.file_sharing.app.security.JWTHelper;
 import com.file_sharing.app.service.RefreshTokenService;
@@ -66,6 +63,20 @@ public class AuthenticationController {
                         .JwtToken(token)
                         .user(modelMapper.map(user, UserDTo.class))
                         .build());
+    }
+    //Regenerates a JWT token using a valid refresh token.
+    // This endpoint accepts a RefreshTokenRequest containing a refresh token,
+    // verifies the token, and generates a new JWT token for the user.
+    @PostMapping("/regenerate-token")
+    public ResponseEntity<JwtResponse>regenerateToken(@RequestBody RefreshTokenRequest refreshTokenRequest) {
+        RefreshTokenDTO refreshTokenDTO=refreshTokenService.findByToken(refreshTokenRequest.getRefreshToken());
+        RefreshTokenDTO refreshTokenDTO1=refreshTokenService.verifyRefreshToken(refreshTokenDTO);
+        UserDTo userDTo= refreshTokenService.getUserByToken(refreshTokenDTO1);
+        String jwtToken= jwtHelper.generateToken(modelMapper.map(userDTo,UserEntity.class));
+        return ResponseEntity.ok(JwtResponse.builder().JwtToken(jwtToken)
+                .user(userDTo)
+                .refreshToken(refreshTokenDTO)
+                .build());
     }
     // Helper method to perform authentication
     private void doAuthenticate(String email, String password) {

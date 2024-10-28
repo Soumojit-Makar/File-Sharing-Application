@@ -9,20 +9,23 @@ public interface FileService {
 
 
 
-    //create
+    // Method to save an uploaded file
+    // Takes the file and the user ID as parameters
     FileDTO saveFile(MultipartFile file, String userID);
-    //delete
+    // Method to delete a file based on its ID
     void deleteFile(String fileID);
-    //auto delete
-    void deleteFilesAuto(String userID);
-    //update
+
+    // Method to automatically delete files based on defined criteria (e.g., expiration)
+    void deleteFilesAuto();
+
+    // Method to update the name of a file based on its ID
     FileDTO updateFile(String fileID,String Name);
-    //download file
+    // Method to download a file based on its ID
     FileDTO downloadFile(String fileId);
-    //get a list of files
+    // Method to get a paginated list of all files with sorting options
     PageableResponse<ResponseFileData> getAllFiles(int pageNumber, int pageSize, String sortBy, String sortDir);
-    // get files by user
+    // Method to get a paginated list of files owned by a specific user with sorting options
     PageableResponse<ResponseFileData> getAllFilesByUser(int pageNumber, int pageSize, String sortBy, String sortDir, String userID);
-    //search
+    // Method to search for files by name, returning a paginated response
     PageableResponse<ResponseFileData> searchFiles(String fileName,int pageNumber, int pageSize, String sortBy, String sortDir);
 }

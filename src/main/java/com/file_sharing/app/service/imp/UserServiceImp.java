@@ -6,7 +6,9 @@ import com.file_sharing.app.entity.FileEntity;
 import com.file_sharing.app.entity.Role;
 import com.file_sharing.app.entity.UserEntity;
 import com.file_sharing.app.exceptions.ResourceNotFoundException;
+import com.file_sharing.app.helper.AppCon;
 import com.file_sharing.app.helper.Helper;
+import com.file_sharing.app.repositories.RolesRepository;
 import com.file_sharing.app.repositories.UserRepository;
 import com.file_sharing.app.service.UserService;
 import org.modelmapper.ModelMapper;
@@ -15,45 +17,49 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImp implements UserService {
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
+    private final PasswordEncoder passwordEncoder;
+    private final RolesRepository rolesRepository;
     private final Logger logger= LoggerFactory.getLogger(UserServiceImp.class);
-    public UserServiceImp(UserRepository userRepository, ModelMapper modelMapper) {
+    public UserServiceImp(UserRepository userRepository, ModelMapper modelMapper, PasswordEncoder passwordEncoder, RolesRepository rolesRepository) {
         this.userRepository = userRepository;
         this.modelMapper = modelMapper;
+        this.passwordEncoder = passwordEncoder;
+        this.rolesRepository = rolesRepository;
     }
     @Override
     public UserDTo createUser(UserDTo userDTO) {
-        List<FileEntity> files = userDTO.getFile() != null
-                ? userDTO.getFile().stream()
-                .map(fileDto -> modelMapper.map(fileDto, FileEntity.class))
-                .collect(Collectors.toList())
-                : new ArrayList<>();
+        Role role1 = rolesRepository.findByRoleName("ROLE_" + AppCon.ROLE_NORMAL).orElse(null);
+        if (role1 == null) {
+            role1 = new Role();
+            role1.setRoleId(UUID.randomUUID().toString());
+            role1.setRoleName("ROLE_" + AppCon.ROLE_NORMAL);
+            rolesRepository.save(role1);
+        }
         UserEntity userEntity =UserEntity.builder()
                 .about(userDTO.getAbout())
                 .name(userDTO.getName())
-                .file(List.of(modelMapper.map(userDTO, FileEntity.class)))
+                .file(null)
                 .userId(UUID.randomUUID().toString())
                 .phone(userDTO.getPhone())
                 .address(userDTO.getAddress())
-//                .roles(List.of(modelMapper.map(userDTO.getRoles(), Role.class)))
                 .enabled(true)
                 .gender(userDTO.getGender())
-                .password(userDTO.getPassword())
+                .password(passwordEncoder.encode(userDTO.getPassword()))
                 .profilePic(userDTO.getProfilePic())
                 .providers(userDTO.getProviders())
                 .email(userDTO.getEmail())
-                .file(files)
                 .build();
+        userEntity.setRoles(List.of(role1));
         UserEntity user= userRepository.save(userEntity);
         UserDTo userdto= modelMapper.map(user, UserDTo.class);
         logger.info("User created {}",userdto.toString());
@@ -70,8 +76,9 @@ public class UserServiceImp implements UserService {
             userEntity.setEmail(userDTO.getEmail());
         }
         if (userDTO.getPassword()!=null) {
-
-            userEntity.setPassword(userDTO.getPassword());
+            if (!userEntity.getPassword().equals(userDTO.getPassword())) {
+                userEntity.setPassword(passwordEncoder.encode(userDTO.getPassword()));
+            }
         }
         if (userDTO.getGender()!=null) {
 
@@ -86,9 +93,9 @@ public class UserServiceImp implements UserService {
         if (userDTO.getAbout()!=null) {
             userEntity.setAbout(userDTO.getAbout());
         }
-//        if (userDTO.getRoles()!=null) {
-//            userEntity.setEnabled(userDTO.isEnabled());
-//        }
+        if (userDTO.getRoles()!=null) {
+            userEntity.setEnabled(userDTO.isEnabled());
+        }
         if (userDTO.getProfilePic()!=null) {
             userEntity.setProfilePic(userDTO.getProfilePic());
         }

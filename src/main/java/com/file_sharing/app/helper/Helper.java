@@ -11,12 +11,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Helper {
+//     * Converts a pageable entity response to a pageable DTO response.
     public static <U,V> PageableResponse<V> pageableResponse(Page<U> page, Class<V> type) {
-        List<U> content = page.getContent();
+        List<U> content = page.getContent(); // Get content from the page
         List<V> dtoList=content
                 .stream()
-                .map(object-> new ModelMapper().map(object, type))
+                .map(object-> new ModelMapper().map(object, type)) // Map each entity to its corresponding DTO
                 .toList();
+        // Return a pageable response with the page details and mapped DTOs
         return new PageableResponse<>(
                 page.getNumber(),
                 page.getSize(),
@@ -26,11 +28,13 @@ public class Helper {
                 page.isLast()
         );
     }
+//    Converts a pageable response of file entities to a pageable response of file data DTOs.
     public static  PageableResponse<ResponseFileData> pageableFileResponse(Page<FileEntity> page){
-        List<FileEntity> content = page.getContent();
+        List<FileEntity> content = page.getContent(); // Get content from the page
         List<ResponseFileData> dtoList=content
                 .stream()
                 .map(object->{
+                    // Build ResponseFileData DTO for each FileEntity
                     return ResponseFileData.builder()
                             .fileName(object.getFileName())
                             .fileSize(object.getFileData().length)
@@ -45,6 +49,7 @@ public class Helper {
 
                 })
                 .toList();
+        // Return a pageable response with the page details and mapped file data DTOs
         return new PageableResponse<>(
                 page.getNumber(),
                 page.getSize(),

@@ -9,10 +9,10 @@ import org.springframework.stereotype.Repository;
 
 import java.time.Instant;
 import java.util.List;
-import java.util.Optional;
+
 @Repository
 public interface FileRepository extends JpaRepository<FileEntity, String> {
     Page<FileEntity> findAllByUploadBy(UserEntity user, Pageable pageable);
     Page<FileEntity> findByFileNameContaining(String fileName, Pageable pageable);
-    List<FileEntity> findAllByExpiryDate(Instant instant);
+    List<FileEntity> findAllByExpiryDateBefore(Instant instant);
 }

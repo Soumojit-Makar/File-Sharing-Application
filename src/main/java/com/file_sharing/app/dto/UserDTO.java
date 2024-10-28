@@ -37,5 +37,5 @@ public class UserDTo {
     private boolean enabled;
     private Providers providers;
     private List<FileDTO> file;
-//    private List<RoleDTo> roles;
+    private List<RoleDTo> roles;
 }

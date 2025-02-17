@@ -5,6 +5,12 @@ import com.file_sharing.app.entity.UserEntity;
 import com.file_sharing.app.security.JWTHelper;
 import com.file_sharing.app.service.RefreshTokenService;
 import com.file_sharing.app.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/auth")
+@Tag(name = "Authentication Controller", description = "Handles all authentication related actions, including user login, token generation, and token regeneration.")
 public class AuthenticationController {
     private Logger logger= LoggerFactory.getLogger(AuthenticationController.class);
     private final AuthenticationManager authenticationManager;
@@ -48,7 +55,18 @@ public class AuthenticationController {
 //
 //     * This endpoint takes a JWTRequest object containing the user's email and password,
 //     * authenticates the user, and generates a JWT token along with a refresh token.
-
+@Operation(summary = "Authenticates a user and generates a JWT token")
+@ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Successful authentication and token generation",
+                content = @Content(mediaType = "application/json",
+                        schema = @Schema(implementation = JwtResponse.class))),
+        @ApiResponse(responseCode = "401", description = "Invalid username or password",
+                content = @Content(mediaType = "application/json",
+                        schema = @Schema(implementation = ApiResponseMessage.class))),
+        @ApiResponse(responseCode = "404", description = "User Not Found",
+                content = @Content(mediaType = "application/json",
+                        schema = @Schema(implementation = ApiResponseMessage.class)))
+})
     @PostMapping("/generate-token")
     public ResponseEntity<JwtResponse> login(@RequestBody JwtRequest jwtRequest) {
         this.doAuthenticate(jwtRequest.getUsername(),jwtRequest.getPassword());
@@ -67,6 +85,16 @@ public class AuthenticationController {
     //Regenerates a JWT token using a valid refresh token.
     // This endpoint accepts a RefreshTokenRequest containing a refresh token,
     // verifies the token, and generates a new JWT token for the user.
+
+    @Operation(summary = "Regenerates a JWT token using a valid refresh token")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successful regeneration of JWT token",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = JwtResponse.class))),
+            @ApiResponse(responseCode = "404", description = "Invalid or expired refresh token",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ApiResponseMessage.class)))
+    })
     @PostMapping("/regenerate-token")
     public ResponseEntity<JwtResponse>regenerateToken(@RequestBody RefreshTokenRequest refreshTokenRequest) {
         RefreshTokenDTO refreshTokenDTO=refreshTokenService.findByToken(refreshTokenRequest.getRefreshToken());

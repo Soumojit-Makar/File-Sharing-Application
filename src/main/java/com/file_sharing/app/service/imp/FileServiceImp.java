@@ -106,8 +106,9 @@ public class FileServiceImp implements FileService {
     }
     // Search files
     @Override
-    public PageableResponse<ResponseFileData> searchFiles(String fileName, int pageNumber, int pageSize, String sortBy, String sortDir) {
-        Page<FileEntity> fileEntityPage = fileRepository.findByFileNameContaining(fileName, PageRequest.of(
+    public PageableResponse<ResponseFileData> searchFiles(String fileName, int pageNumber, int pageSize, String sortBy, String sortDir, String userID) {
+        UserEntity user = userRepository.findById(userID).orElseThrow(() -> new ResourceNotFoundException("User Not Found"));
+        Page<FileEntity> fileEntityPage = fileRepository.findByUploadByAndFileNameContaining(user,fileName, PageRequest.of(
                 pageNumber, pageSize, sortDir.equalsIgnoreCase("desc") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending()));
         return Helper.pageableFileResponse(fileEntityPage); // Return paginated response
     }

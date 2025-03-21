@@ -27,5 +27,5 @@ public interface FileService {
     // Method to get a paginated list of files owned by a specific user with sorting options
     PageableResponse<ResponseFileData> getAllFilesByUser(int pageNumber, int pageSize, String sortBy, String sortDir, String userID);
     // Method to search for files by name, returning a paginated response
-    PageableResponse<ResponseFileData> searchFiles(String fileName,int pageNumber, int pageSize, String sortBy, String sortDir);
+    PageableResponse<ResponseFileData> searchFiles(String fileName, int pageNumber, int pageSize, String sortBy, String sortDir, String userID);
 }

@@ -13,6 +13,6 @@ import java.util.List;
 @Repository
 public interface FileRepository extends JpaRepository<FileEntity, String> {
     Page<FileEntity> findAllByUploadBy(UserEntity user, Pageable pageable);
-    Page<FileEntity> findByFileNameContaining(String fileName, Pageable pageable);
+    Page<FileEntity> findByUploadByAndFileNameContaining(UserEntity user,String fileName, Pageable pageable);
     List<FileEntity> findAllByExpiryDateBefore(Instant instant);
 }

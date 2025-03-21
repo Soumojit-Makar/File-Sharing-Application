@@ -187,7 +187,9 @@ public class FileController {
                             description = "Successfully retrieved files",
                             content = @Content(
                                     mediaType = "application/json",
-                                    schema = @Schema(implementation = PageableResponse.class)
+                                    schema = @Schema(implementation = PageableResponse.class
+
+                                    )
                             )
                     ),
                     @ApiResponse(
@@ -282,8 +284,9 @@ public class FileController {
             @RequestParam(value = "pageNumber",defaultValue = AppCon.Page_Number,required = false) int pageNumber,
             @RequestParam(value = "pageSize",defaultValue = AppCon.Page_Size,required = false) int pageSize,
             @RequestParam(value = "sortBy", defaultValue="fileName",required = false) String sortBy ,
-            @RequestParam(value = "sortDir", defaultValue= AppCon.Sort_Dir,required = false) String sortDir
+            @RequestParam(value = "sortDir", defaultValue= AppCon.Sort_Dir,required = false) String sortDir,
+            @RequestParam(value = "userId",required = true) String userID
     ){
-        return new ResponseEntity<>(fileService.searchFiles(keyword,pageNumber,pageSize,sortBy,sortDir), HttpStatus.ACCEPTED);
+        return new ResponseEntity<>(fileService.searchFiles(keyword,pageNumber,pageSize,sortBy,sortDir,userID), HttpStatus.ACCEPTED);
     }
 }

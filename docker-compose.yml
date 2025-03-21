@@ -1,0 +1,50 @@
+version: "3.8"
+services:
+  mysql:
+    image: mysql:8.0.39
+    container_name: mysql_db
+    networks:
+      - myNetwork
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: file_database
+    ports:
+      - "3308:3306"
+    volumes:
+      - ./mysql_data:/var/lib/mysql
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: php_admin
+    networks:
+      - myNetwork
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+      PMA_USER: root
+      PMA_PASSWORD: root
+    ports:
+      - "8181:80"
+    depends_on:
+      - mysql
+
+  springboot:
+    image: soumojit2003/file-sharing-app
+    container_name: file-sharing-app
+    networks:
+      - myNetwork
+    environment:
+      PORT: 8080
+      MODE: prod
+      MYSQL_HOST: mysql
+      MYSQL_PORT: 3306
+      MYSQL_DB: file_database
+      TOKEN_SECRET: srurwyrietrebx3xr23823rb8r6xr381273623rx23rx726v263rx637r362x3v29v38x63r293r23xr29x29rx3
+      PMA_PASSWORD: root
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mysql
+volumes:
+  mysql_data:
+networks:
+  myNetwork:

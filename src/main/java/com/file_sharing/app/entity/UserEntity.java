@@ -34,7 +34,7 @@ public class UserEntity implements UserDetails{
     private String about;
     private boolean enabled=true;
     private Providers providers;
-    @OneToMany(mappedBy = "uploadBy",fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "uploadBy",fetch = FetchType.EAGER)
     private List<FileEntity> file;
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<Role> roles=new ArrayList<>();
@@ -42,7 +42,9 @@ public class UserEntity implements UserDetails{
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return this.roles.stream().map(role -> new SimpleGrantedAuthority(role.getRoleName())).collect(Collectors.toList());
+        return this.roles.stream()
+                .map(role -> new SimpleGrantedAuthority(role.getRoleName()))
+                .collect(Collectors.toList());
     }
     @Override
     public String getPassword() {

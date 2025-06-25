@@ -15,4 +15,6 @@ public interface FileRepository extends JpaRepository<FileEntity, String> {
     Page<FileEntity> findAllByUploadBy(UserEntity user, Pageable pageable);
     Page<FileEntity> findByUploadByAndFileNameContaining(UserEntity user,String fileName, Pageable pageable);
     List<FileEntity> findAllByExpiryDateBefore(Instant instant);
+
+    List<FileEntity> findAllByUploadBy(UserEntity uploadBy);
 }

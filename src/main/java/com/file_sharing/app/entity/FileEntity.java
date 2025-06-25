@@ -12,7 +12,7 @@ public class FileEntity{
     private String fileId;
     private String fileName;
     private String fileType;
-    @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     private UserEntity uploadBy;
     private Instant uploadDate;
     private Instant expiryDate;

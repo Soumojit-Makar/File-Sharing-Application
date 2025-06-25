@@ -18,9 +18,6 @@ import java.util.function.Function;
 // Marks this class as a Spring bean
 public class JWTHelper {
 
-    // Validity duration for the token in seconds (5 days)
-    private long TOKEN_VALIDITY=5*24*60*60;
-
     // Secret key for signing the token
     @Value("${token.secret}")
     private String SECRET_KEY;
@@ -57,6 +54,8 @@ public class JWTHelper {
     }
     // Helper method to create a JWT token with claims and subject
     private String doGenerateToken(Map<String, Object> claims, String subject) {
+        // Validity duration for the token in seconds (5 days)
+        long TOKEN_VALIDITY = 5 * 24 * 60 * 60;
         return Jwts.builder()
                 .setClaims(claims)
                 .setSubject(subject)
@@ -70,4 +69,9 @@ public class JWTHelper {
         byte[] encodedKey = Base64.getDecoder().decode(SECRET_KEY);
         return Keys.hmacShaKeyFor(encodedKey);
     }
+    public boolean validateToken(String token, UserDetails userDetails) {
+        final String username = getUsernameFromToken(token);
+        return username.equals(userDetails.getUsername()) && !isTokenExpired(token);
+    }
+
 }

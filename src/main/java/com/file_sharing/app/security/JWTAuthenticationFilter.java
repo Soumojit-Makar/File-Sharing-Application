@@ -46,20 +46,24 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
                 logger.error("Unable to get JWT Token: {}", e.getMessage());
             } catch (ExpiredJwtException e) {
                 logger.error("JWT Token has expired: {}", e.getMessage());
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.setContentType("application/json");
+                response.getWriter().write("\"error\" : \"Token expired\"}");
+                return;
             } catch (MalformedJwtException e) {
                 logger.error("JWT Token is malformed: {}", e.getMessage());
             } catch (Exception e) {
                 logger.error("JWT Token processing error: {}", e.getMessage());
             }
         } else {
-            logger.info("Invalid Authorization Header: {}", requestHeader);
+            logger.error("Authorization header missing or does not start with Bearer");
         }
 
         // Authenticate the user if the token is valid
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = userDetailsService.loadUserByUsername(username);
             // Validate token
-            if (username.equals(userDetails.getUsername()) && !jwtHelper.isTokenExpired(token)) {
+            if (jwtHelper.validateToken(token, userDetails)) {
                 UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                 auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(auth);

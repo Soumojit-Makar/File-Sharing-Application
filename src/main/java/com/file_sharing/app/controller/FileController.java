@@ -49,7 +49,7 @@ public class FileController {
                     )
             }
     )
-    @PostMapping("/upload/userId/{userID}")
+    @PostMapping("/{userID}")
     public ResponseEntity<ResponseFileData> uploadFile(@RequestParam("file") MultipartFile file, @PathVariable("userID") String userID) {
         FileDTO fileDTO = fileService.saveFile(file, userID); // Save the file using the service
         String fileDownloadUri = ServletUriComponentsBuilder

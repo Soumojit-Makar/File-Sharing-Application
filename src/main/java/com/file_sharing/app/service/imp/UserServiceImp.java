@@ -8,6 +8,7 @@ import com.file_sharing.app.entity.UserEntity;
 import com.file_sharing.app.exceptions.ResourceNotFoundException;
 import com.file_sharing.app.helper.AppCon;
 import com.file_sharing.app.helper.Helper;
+import com.file_sharing.app.repositories.FileRepository;
 import com.file_sharing.app.repositories.RolesRepository;
 import com.file_sharing.app.repositories.UserRepository;
 import com.file_sharing.app.service.UserService;
@@ -29,12 +30,21 @@ public class UserServiceImp implements UserService {
     private final ModelMapper modelMapper;
     private final PasswordEncoder passwordEncoder;
     private final RolesRepository rolesRepository;
+    private final FileRepository fileRepository;
     private final Logger logger= LoggerFactory.getLogger(UserServiceImp.class);
-    public UserServiceImp(UserRepository userRepository, ModelMapper modelMapper, PasswordEncoder passwordEncoder, RolesRepository rolesRepository) {
+    public UserServiceImp(
+            UserRepository userRepository,
+            ModelMapper modelMapper,
+            PasswordEncoder passwordEncoder,
+            RolesRepository rolesRepository,
+            FileRepository fileRepository
+    ) {
         this.userRepository = userRepository;
         this.modelMapper = modelMapper;
         this.passwordEncoder = passwordEncoder;
         this.rolesRepository = rolesRepository;
+        this.fileRepository = fileRepository;
+
     }
     @Override
     public UserDTo createUser(UserDTo userDTO) {
@@ -110,6 +120,8 @@ public class UserServiceImp implements UserService {
     @Override
     public void deleteUser(String userId) {
         UserEntity user= userRepository.findById(userId).orElseThrow(()->new ResourceNotFoundException("User Not Found"));
+        List<FileEntity> files=fileRepository.findAllByUploadBy(user);
+        fileRepository.deleteAll(files);
         userRepository.delete(user);
     }
 

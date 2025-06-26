@@ -11,6 +11,7 @@ import com.file_sharing.app.helper.Helper;
 import com.file_sharing.app.repositories.FileRepository;
 import com.file_sharing.app.repositories.UserRepository;
 import com.file_sharing.app.service.FileService;
+
 import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +20,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import java.time.Instant;
@@ -84,6 +86,7 @@ public class FileServiceImp implements FileService {
     }
     // Download file
     @Override
+    @Transactional(readOnly = true)
     public FileDTO downloadFile(String fileId) {
         FileEntity fileEntity=fileRepository.findById(fileId).orElseThrow(()->new ResourceNotFoundException("File Not Found"));
 //        logger.info(fileEntity.toString());

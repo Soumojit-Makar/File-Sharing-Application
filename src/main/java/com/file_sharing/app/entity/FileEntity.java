@@ -17,6 +17,6 @@ public class FileEntity{
     private Instant uploadDate;
     private Instant expiryDate;
     @Lob
-    @Column(name = "data",columnDefinition = "LONGBLOB")
+    @Column(name = "data")
     private byte[] fileData;
 }

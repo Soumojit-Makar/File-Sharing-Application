@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.*;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -50,6 +51,7 @@ public class FileController {
             }
     )
     @PostMapping("/{userID}")
+    @PreAuthorize("hasAnyRole('NORMAL', 'ADMIN')")
     public ResponseEntity<ResponseFileData> uploadFile(@RequestParam("file") MultipartFile file, @PathVariable("userID") String userID) {
         FileDTO fileDTO = fileService.saveFile(file, userID); // Save the file using the service
         String fileDownloadUri = ServletUriComponentsBuilder
@@ -88,6 +90,7 @@ public class FileController {
                     )
             }
     )
+
     @GetMapping("/files/download/{fileId}")
     public ResponseEntity<Resource> downloadFile(@PathVariable("fileId") String fileId) {
         FileDTO fileDTO = fileService.downloadFile(fileId); // Retrieve the file details
@@ -127,6 +130,7 @@ public class FileController {
                 )
         }
 )
+@PreAuthorize("hasAnyRole('NORMAL', 'ADMIN')")
     @PutMapping("/update/{fileId}/name/{name}")
     public ResponseEntity<ResponseFileData> updateFile(@PathVariable("fileId") String fileId,@PathVariable("name") String Name) {
         FileDTO fileDTO= fileService.updateFile(fileId, Name); // Update the file using the service
@@ -168,6 +172,7 @@ public class FileController {
                     )
             }
     )
+    @PreAuthorize("hasAnyRole('NORMAL', 'ADMIN')")
     @DeleteMapping("/{fileId}")
     public ResponseEntity<ApiResponseMessage> deleteFile(@PathVariable("fileId") String fileId) {
         fileService.deleteFile(fileId);// Call the service to delete the file
@@ -202,6 +207,7 @@ public class FileController {
                     )
             }
     )
+    @PreAuthorize("hasAnyRole('NORMAL', 'ADMIN')")
     @GetMapping
     public ResponseEntity<PageableResponse<ResponseFileData>> getFiles(
             @RequestParam(value = "pageNumber",defaultValue = AppCon.Page_Number,required = false) int pageNumber,
@@ -245,6 +251,7 @@ public class FileController {
                     )
             }
     )
+    @PreAuthorize("hasAnyRole('NORMAL', 'ADMIN')")
     @GetMapping("/{userId}")
     public ResponseEntity<PageableResponse<ResponseFileData>> getFilesByUserId(
             @PathVariable("userId") String userID,
@@ -278,6 +285,7 @@ public class FileController {
                     )
             }
     )
+    @PreAuthorize("hasAnyRole('NORMAL', 'ADMIN')")
     @GetMapping("/search")
     public ResponseEntity<PageableResponse<ResponseFileData>> search(
             @RequestParam(value = "keyword") String keyword,

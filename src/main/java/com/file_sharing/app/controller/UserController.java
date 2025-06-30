@@ -16,6 +16,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -82,6 +83,7 @@ public class UserController {
                     )
             }
     )
+    @PreAuthorize("hasAnyRole('NORMAL', 'ADMIN')")
     @DeleteMapping("/{userId}")
     ResponseEntity<ApiResponseMessage> deleteUser(@PathVariable("userId") String userId) {
         userService.deleteUser(userId);
@@ -94,6 +96,7 @@ public class UserController {
         );
     }
     //Updates a user's information.
+    @PreAuthorize("hasAnyRole('NORMAL', 'ADMIN')")
     @Operation(
             summary = "Update a user's information",
             description = "Updates a user's details with the provided information.",
@@ -124,6 +127,7 @@ public class UserController {
                     )
             }
     )
+
     @PutMapping("/{userId}")
     ResponseEntity<UserDTo> updateUser(@Valid @RequestBody UserDTo userDTO, @PathVariable("userId") String userId) {
         UserDTo updatedUser=userService.updateUser(userDTO, userId);
@@ -152,6 +156,7 @@ public class UserController {
                     )
             }
     )
+    @PreAuthorize("hasAnyRole('NORMAL', 'ADMIN')")
     @GetMapping
     ResponseEntity<PageableResponse<UserDTo>> getAllUsers(
             @RequestParam(value = "pageNumber",defaultValue = AppCon.Page_Number,required = false) int pageNumber,
@@ -184,6 +189,7 @@ public class UserController {
                     )
             }
     )
+    @PreAuthorize("hasAnyRole('NORMAL', 'ADMIN')")
     @GetMapping("/{userId}")
     ResponseEntity<UserDTo> getUser(
             @PathVariable("userId") String userId,
@@ -219,6 +225,7 @@ public class UserController {
                     )
             }
     )
+    @PreAuthorize("hasAnyRole('NORMAL', 'ADMIN')")
     @GetMapping("/search")
     ResponseEntity<PageableResponse<UserDTo>> searchUsers(
             @RequestParam(value = "searchKeyword") String keyword,

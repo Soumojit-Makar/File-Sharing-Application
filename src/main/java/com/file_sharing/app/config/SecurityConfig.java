@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -21,6 +22,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import java.util.List;
 
 @Configuration
+@EnableMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
     private final JWTAuthenticationFilter jwtAuthenticationFilter;
     private final JWTAuthenticationEntryPoint jwtAuthenticationEntryPoint;
@@ -44,15 +46,13 @@ public class SecurityConfig {
                 })
         );
         // Security Configuration
-        http.authorizeHttpRequests(
-                // URL Configuration
-                authorizeRequests ->{
-                    authorizeRequests
-                            .requestMatchers(HttpMethod.POST, "/file/**").hasAnyRole(AppCon.ROLE_NORMAL, AppCon.ROLE_ADMIN)
-                            .requestMatchers(HttpMethod.PUT, "/file/**", "/user/**").hasAnyRole(AppCon.ROLE_NORMAL, AppCon.ROLE_ADMIN)
-                            .requestMatchers(HttpMethod.DELETE, "/file/**", "/user/**").hasAnyRole(AppCon.ROLE_NORMAL, AppCon.ROLE_ADMIN)
-                            .anyRequest().permitAll();
-                });
+//        http.authorizeHttpRequests(auth -> auth
+//                .requestMatchers("/auth/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
+//                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+//                .requestMatchers("/file/**", "/user/**").hasAnyRole(AppCon.ROLE_NORMAL, AppCon.ROLE_ADMIN)
+//                .anyRequest().permitAll()
+//        );
+
         // for any exception
         http.exceptionHandling(exception -> exception.authenticationEntryPoint(jwtAuthenticationEntryPoint));
         // Stateless Session Creation Policy set

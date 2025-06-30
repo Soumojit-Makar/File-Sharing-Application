@@ -17,7 +17,7 @@ public class FileEntity{
     private Instant uploadDate;
     private Instant expiryDate;
     @Lob
-//    @Basic(fetch = FetchType.LAZY)
+    @Basic(fetch = FetchType.LAZY)
     @Column(name = "data")
     private byte[] fileData;
 }

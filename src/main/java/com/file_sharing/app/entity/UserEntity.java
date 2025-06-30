@@ -34,7 +34,7 @@ public class UserEntity implements UserDetails{
     private String about;
     private boolean enabled=true;
     private Providers providers;
-    @OneToMany(mappedBy = "uploadBy",fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "uploadBy",fetch = FetchType.LAZY)
     private List<FileEntity> file;
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<Role> roles=new ArrayList<>();

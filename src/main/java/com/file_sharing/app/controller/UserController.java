@@ -225,7 +225,7 @@ public class UserController {
                     )
             }
     )
-    @PreAuthorize("hasAnyRole('NORMAL', 'ADMIN')")
+//    @PreAuthorize("hasAnyRole('NORMAL', 'ADMIN')")
     @GetMapping("/search")
     ResponseEntity<PageableResponse<UserDTo>> searchUsers(
             @RequestParam(value = "searchKeyword") String keyword,

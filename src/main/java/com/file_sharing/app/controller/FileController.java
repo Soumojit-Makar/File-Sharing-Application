@@ -207,7 +207,7 @@ public class FileController {
                     )
             }
     )
-    @PreAuthorize("hasAnyRole('NORMAL', 'ADMIN')")
+//    @PreAuthorize("hasAnyRole('NORMAL', 'ADMIN')")
     @GetMapping
     public ResponseEntity<PageableResponse<ResponseFileData>> getFiles(
             @RequestParam(value = "pageNumber",defaultValue = AppCon.Page_Number,required = false) int pageNumber,
@@ -251,7 +251,7 @@ public class FileController {
                     )
             }
     )
-    @PreAuthorize("hasAnyRole('NORMAL', 'ADMIN')")
+//    @PreAuthorize("hasAnyRole('NORMAL', 'ADMIN')")
     @GetMapping("/{userId}")
     public ResponseEntity<PageableResponse<ResponseFileData>> getFilesByUserId(
             @PathVariable("userId") String userID,
